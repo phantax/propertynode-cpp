@@ -1,11 +1,13 @@
 #include <stdexcept>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include "PropertyNode.h"
-#include "String_.h"
 
 using std::cout;
 using std::endl;
 using std::string;
+using std::stringstream;
 
 
 /*
@@ -33,10 +35,18 @@ size_t PropertyNode::findUnique(const std::string& prefix,
 	size_t guess = 1;
 	size_t from = 0;
 
-	while ((max == 0 || (offset + guess) < max) &&
-			properties_.count(String::format(
-					"%s%u", prefix.c_str(), offset + guess))) {
+	while ((max == 0 || (offset + guess) < max)) {
+
+        // Check whether key "<prefix><offset + guess>" already exists
+        stringstream key(prefix);
+        key << offset + guess;
+        if (properties_.count(key.str()) == 0) {
+            // >>> We found a unique name >>>
+            break;
+        }
+
 		from = guess;
+        // We use a form of binary search here
 		guess <<= 1;
 	}
 
@@ -83,21 +93,24 @@ template<typename T>
 bool PropertyNode::propSet(const string& name, const T& value) {
 
 	/* apply the redirect hook */
-	String redirectedName = name;
+	string redirectedName = name;
 	PropertyNode* redirectedNode = (PropertyNode*)0;
 	if (!this->propRedirectHook_(redirectedName, redirectedNode)) {
 
-		/* reuse String instance 'redirectedName' */
+        // Reuse string instance "redirectedName"
 		redirectedName = name;
 
 		/* create a DynamicValue instance representing the value to be set */
 		DynamicValue dynVal;
 		dynVal.setValue<T>(value);
 
-		/* resolve potential auto-ID */
-		if (redirectedName.removeTrailingText("#")) {
-			redirectedName.append(String::format("%u",
-					this->findUnique(redirectedName)));
+        // The key might use the auto-ID feature => check for it
+		if (redirectedName.find_first_of("#") == 0) {
+    		// Resolve potential auto-ID
+            redirectedName.erase(0, 1);
+            stringstream suffix;
+            suffix << this->findUnique(redirectedName);
+            redirectedName.append(suffix.str());
 		}
 
 		/* ... pass it to the write hook */
@@ -108,17 +121,16 @@ bool PropertyNode::propSet(const string& name, const T& value) {
 		if (dynVal.isDef()) {
 			properties_[redirectedName] = dynVal;
 		}
+
+        return true;
 	} else if (redirectedNode != 0) {
 		/* redirection hook has redirected the
 		 * request to another property node */
-		redirectedNode->propSet<T>(redirectedName, value);
-	} else {
-		throw std::runtime_error(String::format(
-				"PropertyNode::propSet<T>(...): "
-				"Redirection for property '%s' failed", name.c_str()));
+		return redirectedNode->propSet<T>(redirectedName, value);
 	}
 
-	return true;
+    // Redirection for property failed
+	return false;
 }
 
 template bool PropertyNode::propSet<int>(const string&, const int&);
@@ -177,9 +189,8 @@ T PropertyNode::propGet(const string& name) const {
 
 	bool found = this->propGetDynamicValue(name, dynVal);
 	if (!found) {
-		throw std::runtime_error(String::format(
-				"PropertyNode::propGet<T>(...): "
-				"Property '%s' not found", name.c_str()));
+		throw std::runtime_error("PropertyNode::propGet<T>(...): "
+				"Property not found: " + name);
 	}
 
 	return dynVal.getValue<T>();
@@ -262,8 +273,7 @@ size_t PropertyNode::propImportLocal(const PropertyNode& properties,
 			it != props.end(); ++it) {
 
 		/* prepend name prefix */
-		String name = it->first;
-		name.prepend(prefix);
+		string name = prefix + it->first;
 
 		/* set property */
 		if (override || properties_.count(name) == 0) {
@@ -281,23 +291,38 @@ size_t PropertyNode::propImportLocal(const PropertyNode& properties,
  */
 void PropertyNode::propPrintLocal() const {
 
-	String line;
+    std::ostream& stream = cout;
 
-	line.appendFixedWidth("Key", 30);
-	line.appendFixedWidth("Value", 150);
-	cout << line << endl;
-
-	line.clear();
-	line.appendRepeated('=', 180);
-	cout << line << endl;
-
+    // In a first step: determine the column widths we need
+    size_t keyColWidth = 10;
+    size_t valColWidth = 10;
 	for (map_type_t::const_iterator it = properties_.begin();
 			it != properties_.end(); ++it) {
+        size_t len = it->first.length();
+        if (len > keyColWidth) {
+            keyColWidth = len;
+        }
+        len = it->second.getValue<string>().length();
+        if (len > valColWidth) {
+            valColWidth = len;
+        }
+    }
+    keyColWidth += 2;
+    valColWidth += 2;
 
-		line.clear();
-		line.appendFixedWidth(it->first.c_str(), 30);
-		line.appendFixedWidth(it->second.getValue<string>().c_str(), 150);
-		cout << line << endl;
+    // Assemble headline
+    stream << std::left << std::setw(keyColWidth) << "Key";
+    stream << std::left << std::setw(valColWidth) << "Value" << endl;
+	string line;
+	line.append(keyColWidth + valColWidth, '=');
+    stream << line << "\n";
+
+    // Assemble body
+	for (map_type_t::const_iterator it = properties_.begin();
+			it != properties_.end(); ++it) {
+        stream << std::left << std::setw(keyColWidth) << it->first;
+        stream << std::left << std::setw(valColWidth)
+                << it->second.getValue<string>() << endl;
 	}
 }
 
@@ -307,12 +332,17 @@ void PropertyNode::propPrintLocal() const {
  */
 string PropertyNode::propGetAsText() const {
 
-	String text;
+	string text;
 
 	for (map_type_t::const_iterator it = properties_.begin();
 			it != properties_.end(); ++it) {
-		text.appendFormat("<%s = %s>\n", it->first.c_str(),
-				it->second.getValue<string>().c_str());
+        stringstream ss;
+        ss << "<";
+        ss << it->first;
+        ss << " = ";
+        ss << it->second.getValue<string>();
+        ss << ">\n";
+        text.append(ss.str());
 	}
 
 	return text;

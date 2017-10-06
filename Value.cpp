@@ -1,8 +1,9 @@
 #include <stdexcept>
+#include <sstream>
 #include "Value.h"
-#include "String_.h"
 
 using std::string;
+using std::stringstream;
 
 
 /*
@@ -275,7 +276,10 @@ double IntValue::getDouble() const {
  */
 string IntValue::getString() const {
 
-	return String::format("%d", value_);
+    // Convert integer <value_> to string
+    stringstream val;
+    val << value_;
+	return val.str();
 }
 
 
@@ -433,7 +437,10 @@ double DoubleValue::getDouble() const {
  */
 string DoubleValue::getString() const {
 
-	return String::format("%f", value_);
+    // Convert float <value_> to string
+    stringstream val;
+    val << value_;
+	return val.str();
 }
 
 
@@ -511,7 +518,7 @@ double StringValue::getDouble() const {
  */
 string StringValue::getString() const {
 
-	return String(value_);
+	return value_;
 }
 
 
