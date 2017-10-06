@@ -15,10 +15,10 @@ SOURCES = $(shell ls *.cpp)
 
 all: test
 
-test: $(SOURCES) ../build/libpropertynode.a
+test: $(SOURCES) ../build/libpropertynode-cpp.a
 	@echo "\033[01;32m=> Compiling '$<' ...\033[00;00m"
 	@mkdir -p $(shell dirname $@)
-	$(CC) $(CFLAGS) $(SOURCES) -lpropertynode -L../build -I../ -o $@
+	$(CC) $(CFLAGS) $(SOURCES) -lpropertynode-cpp -L../build -I../ -o $@
 	@echo ""
 
 info:

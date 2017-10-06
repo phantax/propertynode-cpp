@@ -26,7 +26,7 @@ build/%.o: %.cpp %.h
 library: $(OBJECTS)
 	@echo "\033[01;33m==> Creating static library '$@':\033[00;00m"
 	@mkdir -p build/
-	ar rcs build/libpropertynode.a $(OBJECTS)
+	ar rcs build/libpropertynode-cpp.a $(OBJECTS)
 	@echo ""
 
 test: library
@@ -39,7 +39,7 @@ info:
 	@echo "$(OBJECTS)"
 
 clean:
-	rm -f $(OBJECTS)
+	rm -rf build/
 
 
 
