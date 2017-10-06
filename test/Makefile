@@ -11,12 +11,14 @@ endif
 
 CFLAGS  = -O0 -g
 
+SOURCES = $(shell ls *.cpp)
+
 all: test
 
-test: test.cpp
+test: $(SOURCES) ../build/libpropertynode.a
 	@echo "\033[01;32m=> Compiling '$<' ...\033[00;00m"
 	@mkdir -p $(shell dirname $@)
-	$(CC) $(CFLAGS) $< -lpropertynode -L../build -I../ -o $@
+	$(CC) $(CFLAGS) $(SOURCES) -lpropertynode -L../build -I../ -o $@
 	@echo ""
 
 info:

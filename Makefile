@@ -1,4 +1,4 @@
-.PHONY: all info clean library
+.PHONY: all info clean library test
 
 # Use gcc as default compiler and linker
 # May be changed by passing arguments to make
@@ -28,6 +28,10 @@ library: $(OBJECTS)
 	@mkdir -p build/
 	ar rcs build/libpropertynode.a $(OBJECTS)
 	@echo ""
+
+test: library
+	@echo "\033[01;33m==> Compiling tests ...\033[00;00m"
+	$(MAKE) -C test
 
 info:
 	@echo "Compiler is \"$(CC)\" defined by $(origin CC)"
