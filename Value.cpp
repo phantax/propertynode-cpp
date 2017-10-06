@@ -35,11 +35,11 @@ DynamicValue::DynamicValue() : value_(0) {
  */
 DynamicValue::DynamicValue(const DynamicValue& value) {
 
-	if (value.isDef()) {
-		value_ = value.getValueObject().getCopy();
-	} else {
-		value_ = (ValueBase*)0;
-	}
+    if (value.isDef()) {
+        value_ = value.getValueObject().getCopy();
+    } else {
+        value_ = (ValueBase*)0;
+    }
 }
 
 
@@ -48,10 +48,10 @@ DynamicValue::DynamicValue(const DynamicValue& value) {
  */
 void DynamicValue::setUndef() {
 
-	if (value_ != 0) {
-		delete value_;
-		value_ = 0;
-	}
+    if (value_ != 0) {
+        delete value_;
+        value_ = 0;
+    }
 }
 
 
@@ -60,13 +60,13 @@ void DynamicValue::setUndef() {
  */
 DynamicValue* DynamicValue::getCopy() const {
 
-	DynamicValue* copy;
-	if (value_ != 0) {
-		copy = new DynamicValue(*this);
-	} else {
-		copy = new DynamicValue();
-	}
-	return copy;
+    DynamicValue* copy;
+    if (value_ != 0) {
+        copy = new DynamicValue(*this);
+    } else {
+        copy = new DynamicValue();
+    }
+    return copy;
 }
 
 
@@ -75,11 +75,11 @@ DynamicValue* DynamicValue::getCopy() const {
  */
 const ValueBase& DynamicValue::getValueObject() const {
 
-	if (value_ != 0) {
-		return *value_;
-	} else {
-		throw std::runtime_error("Value::getValueObject(): Value undefined");
-	}
+    if (value_ != 0) {
+        return *value_;
+    } else {
+        throw std::runtime_error("Value::getValueObject(): Value undefined");
+    }
 }
 
 
@@ -89,11 +89,11 @@ const ValueBase& DynamicValue::getValueObject() const {
 template<>
 int DynamicValue::getValue() const {
 
-	if (value_ != 0) {
-		return value_->getInt();
-	} else {
-		throw std::runtime_error("Value::getValue<int>(): Value undefined");
-	}
+    if (value_ != 0) {
+        return value_->getInt();
+    } else {
+        throw std::runtime_error("Value::getValue<int>(): Value undefined");
+    }
 }
 
 
@@ -103,11 +103,11 @@ int DynamicValue::getValue() const {
 template<>
 bool DynamicValue::getValue() const {
 
-	if (value_ != 0) {
-		return value_->getBool();
-	} else {
-		throw std::runtime_error("Value::getValue<bool>(): Value undefined");
-	}
+    if (value_ != 0) {
+        return value_->getBool();
+    } else {
+        throw std::runtime_error("Value::getValue<bool>(): Value undefined");
+    }
 }
 
 
@@ -117,11 +117,11 @@ bool DynamicValue::getValue() const {
 template<>
 double DynamicValue::getValue() const {
 
-	if (value_ != 0) {
-		return value_->getDouble();
-	} else {
-		throw std::runtime_error("Value::getValue<double>(): Value undefined");
-	}
+    if (value_ != 0) {
+        return value_->getDouble();
+    } else {
+        throw std::runtime_error("Value::getValue<double>(): Value undefined");
+    }
 }
 
 
@@ -131,11 +131,11 @@ double DynamicValue::getValue() const {
 template<>
 string DynamicValue::getValue() const {
 
-	if (value_ != 0) {
-		return value_->getString();
-	} else {
-		throw std::runtime_error("Value::getValue<string>(): Value undefined");
-	}
+    if (value_ != 0) {
+        return value_->getString();
+    } else {
+        throw std::runtime_error("Value::getValue<string>(): Value undefined");
+    }
 }
 
 
@@ -145,9 +145,9 @@ string DynamicValue::getValue() const {
 template<>
 bool DynamicValue::setValue(const int& value) {
 
-	this->setUndef();
-	value_ = IntValue::newIntValue(value);
-	return true;
+    this->setUndef();
+    value_ = IntValue::newIntValue(value);
+    return true;
 }
 
 
@@ -157,9 +157,9 @@ bool DynamicValue::setValue(const int& value) {
 template<>
 bool DynamicValue::setValue(const bool& value) {
 
-	this->setUndef();
-	value_ = BoolValue::newBoolValue(value);
-	return true;
+    this->setUndef();
+    value_ = BoolValue::newBoolValue(value);
+    return true;
 }
 
 
@@ -169,9 +169,9 @@ bool DynamicValue::setValue(const bool& value) {
 template<>
 bool DynamicValue::setValue(const double& value) {
 
-	this->setUndef();
-	value_ = DoubleValue::newDoubleValue(value);
-	return true;
+    this->setUndef();
+    value_ = DoubleValue::newDoubleValue(value);
+    return true;
 }
 
 
@@ -181,9 +181,9 @@ bool DynamicValue::setValue(const double& value) {
 template<>
 bool DynamicValue::setValue(const string& value) {
 
-	this->setUndef();
-	value_ = StringValue::newStringValue(value);
-	return true;
+    this->setUndef();
+    value_ = StringValue::newStringValue(value);
+    return true;
 }
 
 
@@ -192,13 +192,13 @@ bool DynamicValue::setValue(const string& value) {
  */
 DynamicValue& DynamicValue::operator=(const DynamicValue& value) {
 
-	this->setUndef();
+    this->setUndef();
 
-	if (value.isDef()) {
-		value_ = value.getValueObject().getCopy();
-	}
+    if (value.isDef()) {
+        value_ = value.getValueObject().getCopy();
+    }
 
-	return *this;
+    return *this;
 }
 
 
@@ -207,7 +207,7 @@ DynamicValue& DynamicValue::operator=(const DynamicValue& value) {
  */
 DynamicValue::~DynamicValue() {
 
-	this->setUndef();
+    this->setUndef();
 }
 
 
@@ -240,7 +240,7 @@ IntValue::IntValue(const IntValue& value) : value_(value.getInt()) {
  */
 IntValue* IntValue::getCopy() const {
 
-	return new IntValue(*this);
+    return new IntValue(*this);
 }
 
 
@@ -249,7 +249,7 @@ IntValue* IntValue::getCopy() const {
  */
 int IntValue::getInt() const {
 
-	return value_;
+    return value_;
 }
 
 
@@ -258,7 +258,7 @@ int IntValue::getInt() const {
  */
 bool IntValue::getBool() const {
 
-	return (value_ != 0);
+    return (value_ != 0);
 }
 
 
@@ -267,7 +267,7 @@ bool IntValue::getBool() const {
  */
 double IntValue::getDouble() const {
 
-	return (double)value_;
+    return (double)value_;
 }
 
 
@@ -279,7 +279,7 @@ string IntValue::getString() const {
     // Convert integer <value_> to string
     stringstream val;
     val << value_;
-	return val.str();
+    return val.str();
 }
 
 
@@ -319,7 +319,7 @@ BoolValue::BoolValue(const BoolValue& value) : value_(value.getBool()) {
  */
 BoolValue* BoolValue::getCopy() const {
 
-	return new BoolValue(*this);
+    return new BoolValue(*this);
 }
 
 
@@ -328,7 +328,7 @@ BoolValue* BoolValue::getCopy() const {
  */
 int BoolValue::getInt() const {
 
-	return value_ ? 1 : 0;
+    return value_ ? 1 : 0;
 }
 
 
@@ -337,7 +337,7 @@ int BoolValue::getInt() const {
  */
 bool BoolValue::getBool() const {
 
-	return value_;
+    return value_;
 }
 
 
@@ -346,7 +346,7 @@ bool BoolValue::getBool() const {
  */
 double BoolValue::getDouble() const {
 
-	return value_ ? 1. : 0.;
+    return value_ ? 1. : 0.;
 }
 
 
@@ -355,13 +355,13 @@ double BoolValue::getDouble() const {
  */
 string BoolValue::getString() const {
 
-	string value;
-	if (value_) {
-		value = "true";
-	} else {
-		value = "false";
-	}
-	return value;
+    string value;
+    if (value_) {
+        value = "true";
+    } else {
+        value = "false";
+    }
+    return value;
 }
 
 
@@ -401,7 +401,7 @@ DoubleValue::DoubleValue(const DoubleValue& value) : value_(value.getDouble()) {
  */
 DoubleValue* DoubleValue::getCopy() const {
 
-	return new DoubleValue(*this);
+    return new DoubleValue(*this);
 }
 
 
@@ -410,7 +410,7 @@ DoubleValue* DoubleValue::getCopy() const {
  */
 int DoubleValue::getInt() const {
 
-	return (int)value_;
+    return (int)value_;
 }
 
 
@@ -419,7 +419,7 @@ int DoubleValue::getInt() const {
  */
 bool DoubleValue::getBool() const {
 
-	return value_ != 0.;
+    return value_ != 0.;
 }
 
 
@@ -428,7 +428,7 @@ bool DoubleValue::getBool() const {
  */
 double DoubleValue::getDouble() const {
 
-	return value_;
+    return value_;
 }
 
 
@@ -440,7 +440,7 @@ string DoubleValue::getString() const {
     // Convert float <value_> to string
     stringstream val;
     val << value_;
-	return val.str();
+    return val.str();
 }
 
 
@@ -482,7 +482,7 @@ StringValue::StringValue(const StringValue& value) : value_(value.getString()) {
  */
 StringValue* StringValue::getCopy() const {
 
-	return new StringValue(*this);
+    return new StringValue(*this);
 }
 
 
@@ -491,7 +491,7 @@ StringValue* StringValue::getCopy() const {
  */
 int StringValue::getInt() const {
 
-	return -1; /* TODO !! */
+    return -1; /* TODO !! */
 }
 
 
@@ -500,7 +500,7 @@ int StringValue::getInt() const {
  */
 bool StringValue::getBool() const {
 
-	return false; /* TODO !! */
+    return false; /* TODO !! */
 }
 
 
@@ -509,7 +509,7 @@ bool StringValue::getBool() const {
  */
 double StringValue::getDouble() const {
 
-	return false; /* TODO !! */
+    return false; /* TODO !! */
 }
 
 
@@ -518,7 +518,7 @@ double StringValue::getDouble() const {
  */
 string StringValue::getString() const {
 
-	return value_;
+    return value_;
 }
 
 
