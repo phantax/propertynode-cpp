@@ -142,6 +142,22 @@ string DynamicValue::getValue() const {
 /*
  * ___________________________________________________________________________
  */
+#ifdef VALUE_USE_BITBUFFERS
+template<>
+BufferReader& DynamicValue::getValue() const {
+
+    if (value_ != 0) {
+        return *((BufferReader*)0); //value_->getString();
+    } else {
+        throw std::runtime_error("Value::getValue<BufferReader&>(): Value undefined");
+    }
+}
+#endif
+
+
+/*
+ * ___________________________________________________________________________
+ */
 template<>
 bool DynamicValue::setValue(const int& value) {
 
@@ -185,6 +201,20 @@ bool DynamicValue::setValue(const string& value) {
     value_ = StringValue::newStringValue(value);
     return true;
 }
+
+
+/*
+ * ___________________________________________________________________________
+ */
+#ifdef VALUE_USE_BITBUFFERS
+template<>
+bool DynamicValue::setValue(const BufferReader& value) {
+
+    this->setUndef();
+    value_ = BufferValue::newBufferValue(value);
+    return true;
+}
+#endif
 
 
 /*
@@ -527,5 +557,100 @@ string StringValue::getString() const {
  */
 StringValue::~StringValue() {
 }
+
+
+
+
+/* ========================================================================= */
+
+
+#ifdef VALUE_USE_BITBUFFERS
+
+/*
+ * ___________________________________________________________________________
+ */
+BufferValue::BufferValue() : value_() {
+}
+
+
+/*
+ * ___________________________________________________________________________
+ */
+BufferValue::BufferValue(const BufferReader& value) : value_() {
+
+    value_.appendFromBuffer(value);
+}
+
+
+/*
+ * ___________________________________________________________________________
+ */
+BufferValue::BufferValue(const BufferValue& value) : value_() {
+
+    value_.appendFromBuffer(value.getBuffer());
+}
+
+
+/*
+ * ___________________________________________________________________________
+ */
+BufferValue* BufferValue::getCopy() const {
+
+    return new BufferValue(*this);
+}
+
+
+/*
+ * ___________________________________________________________________________
+ */
+int BufferValue::getInt() const {
+
+    return -1; /* TODO !! */
+}
+
+
+/*
+ * ___________________________________________________________________________
+ */
+bool BufferValue::getBool() const {
+
+    return false; /* TODO !! */
+}
+
+
+/*
+ * ___________________________________________________________________________
+ */
+double BufferValue::getDouble() const {
+
+    return false; /* TODO !! */
+}
+
+
+/*
+ * ___________________________________________________________________________
+ */
+string BufferValue::getString() const {
+
+    return string("0x") + value_.toHexString();
+}
+
+
+/*
+ * ___________________________________________________________________________
+ */
+const BufferReader& BufferValue::getBuffer() const {
+
+    return value_;
+}
+
+
+/*
+ * ___________________________________________________________________________
+ */
+BufferValue::~BufferValue() {
+}
+
+#endif
 
 

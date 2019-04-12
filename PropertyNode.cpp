@@ -141,6 +141,10 @@ template bool PropertyNode::propSet<double>(const string&, const double&);
 
 template bool PropertyNode::propSet<string>(const string&, const string&);
 
+#ifdef VALUE_USE_BITBUFFERS
+template bool PropertyNode::propSet<BufferReader>(const string&, const BufferReader&);
+#endif
+
 
 /*
  * ___________________________________________________________________________

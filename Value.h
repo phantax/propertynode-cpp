@@ -3,6 +3,11 @@
 
 #include <string>
 
+#ifdef VALUE_USE_BITBUFFERS
+    #include "bitbuffers-cpp/BufferReader.h"
+    #include "bitbuffers-cpp/VectorBuffer.h"
+#endif
+
 class ValueBase;
 
 
@@ -328,4 +333,67 @@ public:
 
 };
 
+
+/* ==========================================================================
+ *
+ *
+ * ========================================================================== */
+
+#ifdef VALUE_USE_BITBUFFERS
+
+class BufferValue : public ValueBase {
+
+private:
+
+    // TODO: Add description
+    VectorBuffer value_;
+
+
+    // TODO: Add description
+    BufferValue();
+
+    // TODO: Add description
+    BufferValue(const BufferReader& value);
+
+    // TODO: Add description
+    BufferValue(const BufferValue& value);
+
+
+public:
+
+    // TODO: Add description
+    static inline BufferValue* newBufferValue(const BufferReader& value) {
+
+        return new BufferValue(value);
+    }
+
+
+    // TODO: Add description
+    virtual BufferValue* getCopy() const;
+
+
+    // TODO: Add description
+    virtual int getInt() const;
+
+    // TODO: Add description
+    virtual bool getBool() const;
+
+    // TODO: Add description
+    virtual double getDouble() const;
+
+    // TODO: Add description
+    virtual std::string getString() const;
+
+    // TODO: Add description
+    virtual const BufferReader& getBuffer() const;
+
+
+    // TODO: Add description
+    virtual ~BufferValue();
+
+};
+
 #endif
+
+#endif
+

@@ -9,13 +9,32 @@ ifeq ($(origin LD), default)
     LD=g++
 endif
 
-CFLAGS  = -O0 -g
-
 SOURCES = $(shell ls *.cpp)
 
 OBJECTS = $(foreach o, $(SOURCES:.cpp=.o), build/$o)
 
+DEPS = 
+
+CFLAGS  = -O0 -g
+
+ifeq ($(origin USE_BITBUFFERS), command line)
+    DEPS+= bitbuffers-cpp
+    CFLAGS+= -DVALUE_USE_BITBUFFERS
+endif
+
+CFLAGS += $(foreach d, $(DEPS), -I$(realpath $d))
+
+LDFLAGS = $(foreach d, $(DEPS), -L$(realpath $d)/build)
+LDFLAGS += $(foreach d, $(DEPS), -l$d)
+
+export CFLAGS
+export LDFLAGS
+
+
 all: library
+
+deps:
+	$(foreach d, $(DEPS), $(MAKE) -C $d;)  
 
 build/%.o: %.cpp %.h
 	@echo "\033[01;32m=> Compiling '$<' ...\033[00;00m"
